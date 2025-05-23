@@ -1,0 +1,9 @@
+!.gitignore
+bench
+order.h
+*.png
+*.csv
+**.swp
+**.o
+**.a
+**.so
