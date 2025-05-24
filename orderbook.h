@@ -330,22 +330,29 @@ public:
         EXPECT(inserted, "duplicate order");
 
         auto& levels = (side == Side::Bid) ? mBidLevels : mAskLevels;
+        if (side == Side::Bid) {
+            // For bids (sorted descending), find first price <= target price
+            auto levelIt = std::find_if(levels.begin(), levels.end(),
+                [price](const auto& level) { return level.first <= price; });
 
-        auto levelIt = std::find_if(levels.begin(), levels.end(),
-            [price](const auto& level) { return level.first == price; });
-
-        if (levelIt != levels.end()) {
-            levelIt->second += volume;
-        } else {
-            // Find insertion point
-            if (side == Side::Bid) {
-                auto insertPos = std::find_if(levels.begin(), levels.end(),
-                    [price](const auto& level) { return price > level.first; });
-                levels.insert(insertPos, {price, volume});
+            if (levelIt != levels.end() && levelIt->first == price) {
+                // Found existing price level
+                levelIt->second += volume;
             } else {
-                auto insertPos = std::find_if(levels.begin(), levels.end(),
-                    [price](const auto& level) { return price < level.first; });
-                levels.insert(insertPos, {price, volume});
+                // Insert at the found position (maintains sorted order)
+                levels.insert(levelIt, {price, volume});
+            }
+        } else {
+            // For asks (sorted ascending), find first price >= target price
+            auto levelIt = std::find_if(levels.begin(), levels.end(),
+                [price](const auto& level) { return level.first >= price; });
+
+            if (levelIt != levels.end() && levelIt->first == price) {
+                // Found existing price level
+                levelIt->second += volume;
+            } else {
+                // Insert at the found position (maintains sorted order)
+                levels.insert(levelIt, {price, volume});
             }
         }
     }
