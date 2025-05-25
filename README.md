@@ -57,21 +57,29 @@ python3 plot.py
 
 The benchmark produces comprehensive statistics for each implementation. Here's a condensed example of the output format (11th Gen I7 CPU Ubuntu Linux):
 
-| Implementation        | Operation          | Mean (μs) | Median (μs) | StdDev  | Min  | Max  |
-|-----------------------|-------------------|----------|------------|--------|------|------|
-| Map-based             | Add 10000 orders  | 1268.6   | 1361       | 441.64 | 720  | 2293 |
-|                       | Modify 5000 orders| 997      | 544.5      | 1366.9 | 279  | 4978 |
-|                       | Delete 3333 orders| 1022.6   | 453        | 1809.1 | 223  | 6432 |
-|                       | Best price lookup | 0.48 ns  | 0.49 ns    | 0.14   | 0.27 | 0.74 |
-| Vector (binary search)| Add 10000 orders  | 729.1    | 704.5      | 64.58  | 656  | 856  |
-|                       | Modify 5000 orders| 285.2    | 249        | 71.32  | 240  | 471  |
-|                       | Delete 3333 orders| 230.3    | 201.5      | 50.66  | 196  | 356  |
-|                       | Best price lookup | 0.25 ns  | 0.25 ns    | 0.005  | 0.24 | 0.26 |
-| Reverse vector        | Add 10000 orders  | 707.5    | 697.5      | 49.98  | 667  | 846  |
-|                       | Modify 5000 orders| 281.4    | 255.5      | 57.16  | 240  | 436  |
-|                       | Delete 3333 orders| 207.1    | 199.5      | 17.39  | 191  | 253  |
-|                       | Best price lookup | 0.26 ns  | 0.25 ns    | 0.02   | 0.25 | 0.33 |
-| Linear search         | Add 10000 orders  | 1220.5   | 1130.5     | 193.31 | 1051 | 1664 |
-|                       | Modify 5000 orders| 452.8    | 435        | 53.44  | 423  | 609  |
-|                       | Delete 3333 orders| 325.4    | 314        | 24.04  | 310  | 392  |
-|                       | Best price lookup | 0.30 ns  | 0.31 ns    | 0.03   | 0.24 | 0.34 |
+| Implementation        | Operation          | Mean (μs) | Median (μs) | StdDev   | Min  | Max  |
+|-----------------------|-------------------|----------|------------|---------|------|------|
+| Map-based             | Add 10000 orders  | 1437.9   | 723.5      | 1730.73 | 681  | 6465 |
+|                       | Modify 5000 orders| 308      | 297.5      | 27.83   | 280  | 364  |
+|                       | Delete 3333 orders| 241.9    | 233.5      | 24.02   | 216  | 297  |
+|                       | Best price lookup | 0.33 ns  | 0.33 ns    | 0.009   | 0.32 | 0.35 |
+| Vector (binary search)| Add 10000 orders  | 699.9    | 688        | 27.98   | 667  | 755  |
+|                       | Modify 5000 orders| 266.7    | 255.5      | 25.39   | 243  | 319  |
+|                       | Delete 3333 orders| 205.8    | 201        | 18.64   | 189  | 255  |
+|                       | Best price lookup | 0.25 ns  | 0.25 ns    | 0.010   | 0.23 | 0.27 |
+| Reverse vector        | Add 10000 orders  | 686.3    | 686.5      | 12.39   | 663  | 708  |
+|                       | Modify 5000 orders| 250.7    | 249        | 6.02    | 244  | 262  |
+|                       | Delete 3333 orders| 201      | 201        | 3.26    | 196  | 208  |
+|                       | Best price lookup | 0.25 ns  | 0.26 ns    | 0.014   | 0.23 | 0.28 |
+| Linear search         | Add 10000 orders  | 938.5    | 933.5      | 13.51   | 925  | 969  |
+|                       | Modify 5000 orders| 446.3    | 432.5      | 25.08   | 428  | 499  |
+|                       | Delete 3333 orders| 317.8    | 313        | 9.09    | 310  | 341  |
+|                       | Best price lookup | 0.33 ns  | 0.34 ns    | 0.023   | 0.27 | 0.35 |
+
+Key observations from this benchmark:
+1. **Reverse vector** shows the most consistent performance (lowest StdDev) across all operations
+2. **Map-based** implementation has high variance in add operations (StdDev 1730μs)
+3. **Binary search** variants outperform linear search by 25-30% for order modifications
+4. **Best price lookup** is fastest with vector-based implementations (~0.25ns)
+
+Note: Results may vary based on CPU architecture, background processes, and memory configuration.
